@@ -20,19 +20,48 @@ public class Spawner : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         StartCoroutine(waitSpawner());
-        StartCoroutine(DesaparecerObjs());
+        //StartCoroutine(DesaparecerObjs());
 
     }
 	
 	// Update is called once per frame
 	void Update () {
         //spawnWait = Random.Range(spawnLeastWait, spawnMostWait);
+        moveMole();
+
+    }
+
+    void moveMole()
+    {
         spawnWait = Random.Range(2, 5); //tiempo aleatorio
         randmEnemy = Random.Range(0, 4);  // enemigo aleatorio para desaparecer
 
         //Debug.Log("spawnWait "+spawnWait);
-        Debug.Log("My randmEnemy "+ randmEnemy);
+        Debug.Log("My randmEnemy " + randmEnemy);
         //DesaparecerObjs();
+        if (healthPackClones[randEnemy].transform.position.y < 10f)
+        {
+            subir(randEnemy);
+            Debug.Log("Pos" + healthPackClones[randEnemy].transform.position.y);
+        }
+        else { 
+            bajar(randEnemy);
+        }   
+
+    }
+
+    void subir(int posEnemy)
+    {
+        Vector3 mypos = healthPackClones[posEnemy].transform.position;
+
+        healthPackClones[posEnemy].transform.Translate(0,0.5f, 0);///(Vector3.forward * Time.deltaTime);
+        //yield return new WaitForSeconds(10);
+        //healthPackClones[posEnemy].transform.Translate(Vector3.up * Time.deltaTime, Space.World);//(mypos);
+    }
+
+    void bajar(int posEnemy)
+    {
+        healthPackClones[posEnemy].transform.Translate(0,-0.5F, 0, Space.World);
     }
 
     IEnumerator waitSpawner()
