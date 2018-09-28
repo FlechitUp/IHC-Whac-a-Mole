@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour {
     public float spawnWait;
     public float spawnLeastWait;
     public float spawnMostWait;
+    public float moveY;
+    public float posAlpha;
     public int startWait;
     public int randmEnemy;
     public bool stop;
@@ -18,7 +20,9 @@ public class Spawner : MonoBehaviour {
 
 
 	// Use this for initialization
-	void Start () {
+	void Start () {      
+        moveY = 0;
+        posAlpha = 3.0f;
         StartCoroutine(waitSpawner());
         //StartCoroutine(DesaparecerObjs());
 
@@ -26,42 +30,49 @@ public class Spawner : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //spawnWait = Random.Range(spawnLeastWait, spawnMostWait);
+        //spawnWait = Random.Range(spawnLeastWait, spawnMostWait);       
+        spawnWait = Random.Range(2, 5); //tiempo aleatorio
+        randmEnemy = Random.Range(0, 4);  // enemigo aleatorio para desaparecer
+
         moveMole();
 
     }
 
     void moveMole()
-    {
-        spawnWait = Random.Range(2, 5); //tiempo aleatorio
-        randmEnemy = Random.Range(0, 4);  // enemigo aleatorio para desaparecer
-
-        //Debug.Log("spawnWait "+spawnWait);
-        Debug.Log("My randmEnemy " + randmEnemy);
+    {        
+        Debug.Log("randmEnemy " + randmEnemy);
         //DesaparecerObjs();
-        if (healthPackClones[randEnemy].transform.position.y < 10f)
+       // Debug.Log("moveY "+ moveY);
+        if (posAlpha >=3)//healthPackClones[randEnemy].transform.position.y < 2.0f)
         {
-            subir(randEnemy);
-            Debug.Log("Pos" + healthPackClones[randEnemy].transform.position.y);
-        }
-        else { 
+            Debug.Log("bajar "+ moveY);
             bajar(randEnemy);
-        }   
+            //Debug.Log("Pos" + healthPackClones[randEnemy].transform.position.y);
+        }
+        else {
+            if (posAlpha <= -3) 
+            {
+                Debug.Log("subir " + moveY);
+                subir(randEnemy);
+            }
+        }
+        posAlpha += moveY;
 
     }
 
     void subir(int posEnemy)
-    {
-        Vector3 mypos = healthPackClones[posEnemy].transform.position;
-
-        healthPackClones[posEnemy].transform.Translate(0,0.5f, 0);///(Vector3.forward * Time.deltaTime);
-        //yield return new WaitForSeconds(10);
-        //healthPackClones[posEnemy].transform.Translate(Vector3.up * Time.deltaTime, Space.World);//(mypos);
+    {        
+        moveY = 0.5f;
+        healthPackClones[posEnemy].transform.Translate(0,moveY, 0);///(Vector3.forward * Time.deltaTime);   
+        Debug.Log("Pos" + healthPackClones[posEnemy].transform.position.y);
+        //yield return new WaitForSeconds(10);        
     }
 
     void bajar(int posEnemy)
     {
-        healthPackClones[posEnemy].transform.Translate(0,-0.5F, 0, Space.World);
+        moveY = -0.5f;
+        healthPackClones[posEnemy].transform.Translate(0,moveY, 0);
+        Debug.Log("Pos" + healthPackClones[posEnemy].transform.position.y);
     }
 
     IEnumerator waitSpawner()
@@ -73,7 +84,6 @@ public class Spawner : MonoBehaviour {
             Vector3 spawnPosition = new Vector3(-spawnValues.x+2.0f+i, 1, -spawnValues.z);
             healthPackClones.Add(Instantiate(enemy, spawnPosition + transform.TransformPoint(0, 0, 0),gameObject.transform.rotation));     
         }
-
        
         // yield return new WaitForSeconds(startWait+5);
         // healthPackClones[0].SetActive(false);
